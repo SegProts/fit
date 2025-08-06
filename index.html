@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen Test (Safari iOS/macOS)</title>
+    <title>Полноэкранный режим на iPhone</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
     <style>
         body {
             font-family: -apple-system, sans-serif;
@@ -21,87 +24,49 @@
             background-color: #007aff;
             color: white;
         }
-        #exitFullscreenBtn {
+        #exitBtn {
             background-color: #ff3b30;
         }
-        .status {
+        .instructions {
             margin-top: 20px;
-            font-weight: bold;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>Fullscreen Test</h1>
-    <p>Проверка работы Fullscreen API в Safari (iOS/macOS)</p>
+    <h1>Полноэкранный режим</h1>
+    <p>На iPhone это работает только через добавление на домашний экран.</p>
 
-    <button id="enterFullscreenBtn">Войти в полноэкранный режим</button>
-    <button id="exitFullscreenBtn" disabled>Выйти из полноэкранного режима</button>
+    <!-- Кнопки -->
+    <button id="addToHomeScreenBtn">Добавить на домашний экран</button>
+    <button id="exitBtn" disabled>Выйти (перезагрузите страницу)</button>
 
-    <div class="status" id="statusText">Режим: Обычный</div>
+    <!-- Инструкция -->
+    <div class="instructions" id="instructions">
+        <h3>Как добавить на домашний экран:</h3>
+        <p>1. Нажмите <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/IOS_Share_Icon.svg/120px-IOS_Share_Icon.svg.png" width="20" alt="Поделиться"> в Safari.</p>
+        <p>2. Выберите «На экран "Домой"».</p>
+        <p>3. Откройте сайт через иконку на рабочем столе.</p>
+    </div>
 
     <script>
-        const enterBtn = document.getElementById('enterFullscreenBtn');
-        const exitBtn = document.getElementById('exitFullscreenBtn');
-        const statusText = document.getElementById('statusText');
-
-        // Проверяем поддержку Fullscreen API (с префиксом для Safari)
-        const docElement = document.documentElement;
-        const requestFullscreen = 
-            docElement.requestFullscreen || 
-            docElement.webkitRequestFullscreen || 
-            docElement.msRequestFullscreen;
-
-        const exitFullscreen = 
-            document.exitFullscreen || 
-            document.webkitExitFullscreen || 
-            document.msExitFullscreen;
-
-        // Вход в полноэкранный режим
-        enterBtn.addEventListener('click', () => {
-            if (requestFullscreen) {
-                requestFullscreen.call(docElement).then(() => {
-                    statusText.textContent = "Режим: Полноэкранный";
-                    enterBtn.disabled = true;
-                    exitBtn.disabled = false;
-                }).catch(err => {
-                    statusText.textContent = "Ошибка: " + err.message;
-                });
-            } else {
-                statusText.textContent = "Fullscreen API не поддерживается";
-            }
+        // Показываем инструкцию при нажатии на кнопку
+        document.getElementById('addToHomeScreenBtn').addEventListener('click', () => {
+            document.getElementById('instructions').style.display = 'block';
         });
 
-        // Выход из полноэкранного режима
-        exitBtn.addEventListener('click', () => {
-            if (exitFullscreen) {
-                exitFullscreen.call(document).then(() => {
-                    statusText.textContent = "Режим: Обычный";
-                    enterBtn.disabled = false;
-                    exitBtn.disabled = true;
-                });
-            }
+        // Кнопка "Выйти" просто перезагружает страницу (для PWA это необходимо)
+        document.getElementById('exitBtn').addEventListener('click', () => {
+            location.reload();
         });
 
-        // Следим за изменениями режима (например, если пользователь вышел жестом)
-        document.addEventListener('fullscreenchange', updateFullscreenStatus);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenStatus);
-        document.addEventListener('msfullscreenchange', updateFullscreenStatus);
-
-        function updateFullscreenStatus() {
-            const isFullscreen = 
-                document.fullscreenElement || 
-                document.webkitFullscreenElement || 
-                document.msFullscreenElement;
-            
-            if (isFullscreen) {
-                statusText.textContent = "Режим: Полноэкранный";
-                enterBtn.disabled = true;
-                exitBtn.disabled = false;
-            } else {
-                statusText.textContent = "Режим: Обычный";
-                enterBtn.disabled = false;
-                exitBtn.disabled = true;
-            }
+        // Проверяем, открыт ли сайт как PWA
+        if (window.navigator.standalone) {
+            document.getElementById('addToHomeScreenBtn').style.display = 'none';
+            document.getElementById('exitBtn').disabled = false;
         }
     </script>
 </body>

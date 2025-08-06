@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Test (Safari iOS/macOS)</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #007aff;
+            color: white;
+        }
+        #exitFullscreenBtn {
+            background-color: #ff3b30;
+        }
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fullscreen Test</h1>
+    <p>Проверка работы Fullscreen API в Safari (iOS/macOS)</p>
+
+    <button id="enterFullscreenBtn">Войти в полноэкранный режим</button>
+    <button id="exitFullscreenBtn" disabled>Выйти из полноэкранного режима</button>
+
+    <div class="status" id="statusText">Режим: Обычный</div>
+
+    <script>
+        const enterBtn = document.getElementById('enterFullscreenBtn');
+        const exitBtn = document.getElementById('exitFullscreenBtn');
+        const statusText = document.getElementById('statusText');
+
+        // Проверяем поддержку Fullscreen API (с префиксом для Safari)
+        const docElement = document.documentElement;
+        const requestFullscreen = 
+            docElement.requestFullscreen || 
+            docElement.webkitRequestFullscreen || 
+            docElement.msRequestFullscreen;
+
+        const exitFullscreen = 
+            document.exitFullscreen || 
+            document.webkitExitFullscreen || 
+            document.msExitFullscreen;
+
+        // Вход в полноэкранный режим
+        enterBtn.addEventListener('click', () => {
+            if (requestFullscreen) {
+                requestFullscreen.call(docElement).then(() => {
+                    statusText.textContent = "Режим: Полноэкранный";
+                    enterBtn.disabled = true;
+                    exitBtn.disabled = false;
+                }).catch(err => {
+                    statusText.textContent = "Ошибка: " + err.message;
+                });
+            } else {
+                statusText.textContent = "Fullscreen API не поддерживается";
+            }
+        });
+
+        // Выход из полноэкранного режима
+        exitBtn.addEventListener('click', () => {
+            if (exitFullscreen) {
+                exitFullscreen.call(document).then(() => {
+                    statusText.textContent = "Режим: Обычный";
+                    enterBtn.disabled = false;
+                    exitBtn.disabled = true;
+                });
+            }
+        });
+
+        // Следим за изменениями режима (например, если пользователь вышел жестом)
+        document.addEventListener('fullscreenchange', updateFullscreenStatus);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenStatus);
+        document.addEventListener('msfullscreenchange', updateFullscreenStatus);
+
+        function updateFullscreenStatus() {
+            const isFullscreen = 
+                document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.msFullscreenElement;
+            
+            if (isFullscreen) {
+                statusText.textContent = "Режим: Полноэкранный";
+                enterBtn.disabled = true;
+                exitBtn.disabled = false;
+            } else {
+                statusText.textContent = "Режим: Обычный";
+                enterBtn.disabled = false;
+                exitBtn.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -3,70 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Полноэкранный режим на iPhone</title>
+    <title>Fit App</title>
+    
+    <!-- PWA-настройки -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-title" content="Fit App">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="manifest" href="/fit/manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    
     <style>
         body {
             font-family: -apple-system, sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f0f0f0;
+            background-color: #000000; /* Чёрный фон */
+            color: #ffffff; /* Белый текст */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        button {
-            padding: 12px 24px;
+        h1 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        p {
             font-size: 16px;
-            margin: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #007aff;
-            color: white;
-        }
-        #exitBtn {
-            background-color: #ff3b30;
-        }
-        .instructions {
-            margin-top: 20px;
-            padding: 15px;
-            background: #fff;
-            border-radius: 10px;
-            display: none;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <h1>Полноэкранный режим</h1>
-    <p>На iPhone это работает только через добавление на домашний экран.</p>
-
-    <!-- Кнопки -->
-    <button id="addToHomeScreenBtn">Добавить на домашний экран</button>
-    <button id="exitBtn" disabled>Выйти (перезагрузите страницу)</button>
-
-    <!-- Инструкция -->
-    <div class="instructions" id="instructions">
-        <h3>Как добавить на домашний экран:</h3>
-        <p>1. Нажмите <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/IOS_Share_Icon.svg/120px-IOS_Share_Icon.svg.png" width="20" alt="Поделиться"> в Safari.</p>
-        <p>2. Выберите «На экран "Домой"».</p>
-        <p>3. Откройте сайт через иконку на рабочем столе.</p>
-    </div>
+    <h1>Fit App</h1>
+    <p>Добавьте это приложение на экран «Домой»</p>
+    <p>для полноэкранного режима</p>
 
     <script>
-        // Показываем инструкцию при нажатии на кнопку
-        document.getElementById('addToHomeScreenBtn').addEventListener('click', () => {
-            document.getElementById('instructions').style.display = 'block';
-        });
-
-        // Кнопка "Выйти" просто перезагружает страницу (для PWA это необходимо)
-        document.getElementById('exitBtn').addEventListener('click', () => {
-            location.reload();
-        });
-
-        // Проверяем, открыт ли сайт как PWA
-        if (window.navigator.standalone) {
-            document.getElementById('addToHomeScreenBtn').style.display = 'none';
-            document.getElementById('exitBtn').disabled = false;
+        // Автоматический редирект для PWA
+        if (window.navigator.standalone && !window.location.href.includes('/fit/')) {
+            window.location.href = 'https://segprots.github.io/fit/';
         }
     </script>
 </body>
